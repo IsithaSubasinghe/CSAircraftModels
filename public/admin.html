@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS Aircraft Models — Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0e6d2 0%, #ffffff 100%);
+        }
+        .admin-header {
+            padding: 40px 20px 20px;
+            text-align: center;
+        }
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .admin-header p {
+            color: var(--gray);
+            margin: 0 auto;
+            max-width: 780px;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .orders-table th,
+        .orders-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #ececec;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .orders-table th {
+            background: #f8f4e9;
+            color: var(--navy);
+            font-weight: 600;
+        }
+        .orders-table tbody tr:hover {
+            background: #faf5ee;
+        }
+        .orders-table td:last-child {
+            color: var(--gray);
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--light-gold);
+            color: var(--navy);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .dashboard-note {
+            max-width: 900px;
+            margin: 0 auto;
+            color: var(--navy);
+            font-size: 0.95rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <section class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p>View the submitted custom model requests stored in the database. This page is protected by HTTP Basic Authentication, so only authorized users can access it.</p>
+        </section>
+
+        <section>
+            <div class="dashboard-note">
+                <p>To access this page, use the admin credentials set in your `.env` file: <code>ADMIN_USER</code> and <code>ADMIN_PASSWORD</code>.</p>
+            </div>
+
+            <table class="orders-table" id="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Country</th>
+                        <th>WhatsApp</th>
+                        <th>Model</th>
+                        <th>Size</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="9" style="text-align:center; padding: 30px; color: var(--gray);">Loading orders...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        async function loadOrders() {
+            const tableBody = document.querySelector('#orders-table tbody');
+            try {
+                const response = await fetch('/api/admin/orders');
+                if (!response.ok) throw new Error('Failed to load orders');
+                const orders = await response.json();
+                tableBody.innerHTML = orders.map(order => `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${new Date(order.createdAt).toLocaleString()}</td>
+                        <td>${order.name}</td>
+                        <td>${order.email}</td>
+                        <td>${order.country}</td>
+                        <td>${order.whatsapp}</td>
+                        <td>${order.model}</td>
+                        <td>${order.size || '-'}</td>
+                        <td><span class="badge">${order.status}</span></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 30px; color: red;">Unable to load orders. Please check your login and server configuration.</td></tr>`;
+                console.error(error);
+            }
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>
