@@ -5,7 +5,7 @@ const navLinks = document.querySelectorAll('.nav-menu a');
 const orderForm = document.getElementById('order-form');
 const yearSpan = document.getElementById('year');
 
-const WHATSAPP_NUMBER = '947759164002'; // Replace with your real WhatsApp phone number, including country code and no + or spaces.
+const WHATSAPP_NUMBER = '94779164002'; // Replace with your real WhatsApp phone number, including country code and no + or spaces.
 const WHATSAPP_MESSAGE = 'Hello, I would like to request a custom aircraft model.';
 const whatsappLinks = document.querySelectorAll('.whatsapp-icon, .whatsapp-float');
 
